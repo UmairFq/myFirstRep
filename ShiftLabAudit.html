@@ -1,0 +1,264 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ShiftLab Utility</title>
+    <meta name="viewport" content="width = device-width" , initial-scale="1.0">
+    <link href="Content/Loader.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Drag and drop file to upload</title>
+    <style>
+        * {
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background:url("BGImages/bg9.jpg") no-repeat;
+            background-size: cover; 
+            background-color:gainsboro;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+        }
+        .active-drop {
+        background: #77bafa !important;
+        border: solid 2px blue !important;
+        opacity: .5;
+        color: black !important;
+    }
+        #main_div {
+    border: 1px solid gray;
+    /* opacity: 1; */
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #ffffff60;
+    width: 700px;
+    backdrop-filter: blur(6px)
+
+            /*border: 1px solid gray;
+            opacity:0.8;
+            padding:10px;
+            border-radius:5px; 
+            background-color:white; 
+            box-shadow: 10px 10px 8px #888888; 
+            width:700px;*/
+        }
+        .drag-area {
+            border: 2px dashed #000000;
+            height: 200px;
+            width: 700px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+            .drag-area.active {
+                border: 2px solid #000000;
+            }
+
+            .drag-area header {
+                font-size: 30px;
+                font-weight: 500;
+                color: #000000;
+            }
+
+
+
+        h2 {
+            border: 2px solid #395397;
+            border-radius: 5px;
+            padding: 20px;
+            color: #395397;
+        }
+        #box {
+        width: 100%;
+        height: 300px;
+        background: white;
+        border: 3px dashed #b5b5b5;
+        text-align: center;
+        color: black;
+        border-radius: 10px;
+        /*position:absolute;*/
+        /*padding-top: 12px;*/
+    }
+        #box:hover{
+            
+            border: 3px dashed gray; 
+        }
+        .Btns {
+            padding: 7px 25px;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            
+            color: #000;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: auto;
+            display: block;
+            margin-top: 10px;
+            box-shadow:3px 4px 10px -3px #000, inset -3px -4px 10px -3px #000, -3px -4px 10px -3px #fff, inset 3px 4px 10px -3px #fff;
+        }
+        .Btns:hover{
+             box-shadow:3px 4px 10px -3px #fff, inset -3px -4px 10px -3px #fff, -3px -4px 10px -3px #000, inset 3px 4px 10px -3px #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="loader" style="position: fixed;z-index: 9999;height: 100vh;width: 100vw;top: 0;left: 0;" hidden="hidden" >
+            <div class="loader-wrap">
+                <div class="loader">
+                    <span class="loader-item"></span><span class="loader-item"></span><span class="loader-item"></span>
+                    <span class="loader-item"></span><span class="loader-item"></span><span class="loader-item"></span><span class="loader-item"></span>
+                    <span class="loader-item"></span><span class="loader-item"></span><span class="loader-item"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="resultModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" style="position:static;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLongTitle">Result</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <pre style="font-family:serif">  
+                    Traffic From Qurey : <label id="queryTraffic"></label>     &     Traffic In File : <label id="FileTraffic"></label>     &      Traffic In DB : <label id="dbTraffic"></label> 
+                    Monitored Boxes From Qurey: <label id="queryMonitoredBoxes"></label>     &     Monitored Boxes In File : <label id="FileMonitoredBoxes"></label>     &     Monitored Boxes In DB : <label id="DbMonitoredBoxes"></label> 
+                    UnMonitored Boxes From Qurey : <label id="queryUnmonitoredBoxes"></label>     &     UnMonitored Boxes In File : <label id="FileUnmonitoredBoxes"></label>     &      UnMonitored Boxes In DB : <label id="DbUnmonitoredBoxes"></label>    
+                    
+                    <label id="lblresult" style="color:#0ca30c; font:bold; font-weight:600;"></label>
+                </pre>
+                    <div id="mainDiv" hidden style="height:200px; overflow-y:auto">
+                        <h4 style="text-align:center">Mismatched Data</h4>
+                        <table class="table table-hover table-responsive table-bordered table-striped" id="MissingTable">
+                            <tbody>
+                            </tbody>
+                        </table>
+                   </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="loader2"></div>-->
+    <div id="main_div">
+        <center>
+            <h2> ShiftLab Files Audit </h2>
+            <div class="form-inline">
+                <select id="ClientType" class="form-control Btns">
+                    <option value="NUll">Select Client Type</option>
+                    <option value="BOT">BOT</option>
+                    <option value="ATI">ATI</option>
+                    <option value="RQDC">RQDC</option>
+                </select>
+                <select id="company" class="form-control Btns">
+                    <option value="NUll">Select Client First</option>
+                </select>
+            </div>
+            <br />
+            <!-- Modal -->
+            <div id="box">
+                <br />
+                <img src="Content/excel.png" width="150" height="150" />
+                <h4 style="text-align:center; font-size:x-large">Drag and Drop Here</h4>
+            </div>
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <button id="BtnAudit" class="Btns">Audit</button>                
+                </div>
+                <div class="col-sm-4" >
+                    <button class="Btns" data-toggle="modal" data-target="#resultModal" style="float:right;">View Report</button>
+                </div>
+            </div>
+        </center>
+    </div>
+    
+    
+    <script src="Scripts/jquery.filedrop.js"></script>
+    <script src="https://unpkg.com/diff@5.0.0/dist/diff.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <script src="https://unpkg.com/underscore@1.13.1/underscore-esm-min.js"></script>
+    <script type= 'module'>
+        import {CompanyQuery,BtnAudit} from './MainScript.mjs'
+        $("#ClientType").change(function () {
+            var type = $('#ClientType').val()
+            $.ajax({
+                url: 'http://74.214.18.24/api/DBOL/Query/',
+                 method: 'post',
+           data: {
+                 server: 'SERVER48',
+                 query : CompanyQuery(type)
+                 },
+                 type: 'json',
+                success: function (data) {
+                    $('#company').empty();
+                    $('#company').append('<option value="-1">Select a Company</option>');
+                    for(var i=0; i<data.Table.length; i++){
+                        $('#company').append('<option value = ' + data.Table[i].DBName + '>' + data.Table[i].companyName + '</option>');                        
+                    }
+                }
+            });
+        })
+        var selectedFiles;
+        let reader = new FileReader();
+        var txt;
+       
+        // var DbTarffic, DbMonitoriedBoxes, DbUnMonitoriedBoxes, FileTarffic, FileMonitoriedBoxes, FileUnMonitoriedBoxes = 0;
+        var TotalData;
+        $('#BtnAudit').click(function(){
+            BtnAudit(selectedFiles,reader,txt,TotalData);
+        });
+        $(document).ready(function () {
+            var box;
+            box = document.getElementById("box");
+            box.addEventListener("dragenter", OnDragEnter, false);
+            box.addEventListener("dragover", OnDragOver, false);
+            box.addEventListener("drop", OnDrop, false);
+            box.addEventListener("dragleave", OnDragleave, false);
+        });
+    
+        function OnDragleave(e) {
+            $('#box').removeClass('active-drop');
+        }
+        function OnDragEnter(e) {
+            e.stopPropagation();
+            $('#box').addClass('active-drop');
+            e.preventDefault();
+        }
+    
+        function OnDragOver(e) {
+            e.stopPropagation();
+            $('#box').addClass('active-drop');
+            e.preventDefault();
+        }
+    
+        function OnDrop(e) {
+            e.stopPropagation();
+            $('#box').removeClass('active-drop');
+            e.preventDefault();
+            selectedFiles = e.dataTransfer.files;
+            $("#box").html(selectedFiles[0].name + " file(s) selected! <br/><br/> <img src=\"Content/excel.png\" width=\"150\" height=\"150\"/> <br/>  <h4>File Uploaded!<h4/>");
+            reader.readAsText(selectedFiles[0]);
+        }
+    
+       
+    
+    </script>        
+</body>
+</html>
